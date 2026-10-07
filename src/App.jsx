@@ -1,15 +1,18 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import "./App.css";
 
 function App() {
   const [pokemon, setPokemon] = useState(null);
   console.log("component <App.jsx> rendered");
 
-  fetch("https://pokeapi.co/api/v2/pokemon/mewtwo")
+  useEffect(() => {
+    console.log("effect rendered");
     // "reponse" esta entre paréntesis porque es un parámetro de la función flecha que se ejecuta cuando la promesa se resuelve.
     // Si no tuviera paréntesis, es porque solo hay un parámetro, y no es necesario ponerlo entre paréntesis.
-    .then((res) => res.json())
-    .then((data) => setPokemon(data));
+    fetch("https://pokeapi.co/api/v2/pokemon/mewtwo")
+      .then((res) => res.json())
+      .then((data) => setPokemon(data));
+  }, []);
 
   return (
     <>
