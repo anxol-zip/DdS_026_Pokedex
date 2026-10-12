@@ -1,0 +1,143 @@
+/* Fondo con color para que el efecto de vidrio se note */
+body {
+  background:
+    radial-gradient(circle at 20% 20%, #ff6b6b 0, transparent 40%),
+    radial-gradient(circle at 80% 30%, #4facfe 0, transparent 40%),
+    radial-gradient(circle at 50% 90%, #a66cff 0, transparent 45%),
+    #1b1b2f;
+  background-attachment: fixed;
+}
+
+/* Título en blanco para que contraste con el fondo oscuro */
+h1 {
+  color: #fff;
+}
+
+/* Contenedor principal: centrado y con espacio entre elementos */
+.viewer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 24px;
+  padding: 0 16px;
+}
+
+/* Contenedor de la tarjeta principal: centrado y con tamaño mínimo */
+.card-slot {
+  min-height: 420px;
+  min-width: 300px;
+  display: grid;
+  place-items: center;
+  color: #fff;
+}
+
+/* Glassmorphism: fondo semitransparente + blur + borde claro */
+.card,
+.nav-btn {
+  background: rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
+}
+
+/* Tarjeta principal: bordes redondeados, padding y color de texto */
+.card {
+  border-radius: 24px;
+  padding: 24px 32px;
+  color: #fff;
+}
+
+/* Título de la tarjeta: color blanco y capitalización de la primera letra */
+.card h2 {
+  color: #fff;
+  text-transform: capitalize;
+}
+
+/* Imagen de la tarjeta: sombra para resaltar la imagen */
+.card img {
+  filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.35));
+}
+
+/* Lista de tipos: sin viñetas, centrada y con espacio entre elementos */
+.types {
+  list-style: none;
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  padding: 0;
+  margin: 12px 0;
+}
+
+/* Elementos de la lista de tipos: padding, borde redondeado, fondo semitransparente y capitalización de la primera letra */
+.types li {
+  padding: 4px 14px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.2);
+  text-transform: capitalize;
+  font-size: 15px;
+}
+
+/* Botones de navegación: color blanco, padding, borde redondeado y transición para el efecto hover */
+.nav-btn {
+  color: #fff;
+  font: inherit;
+  padding: 12px 18px;
+  border-radius: 16px;
+  cursor: pointer;
+  transition: transform 0.15s, background 0.15s;
+}
+
+/*
+ * Efecto hover para los botones de navegación: cambio de fondo y desplazamiento hacia arriba
+.nav-btn:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.22);
+  transform: translateY(-2px);
+}
+
+  * Efecto para los botones de navegación deshabilitados: opacidad reducida y cursor no permitido
+.nav-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+*/
+
+/* Mensaje de error: color rojo claro */
+.error {
+  color: #ffb3b3;
+}
+
+/* Tarjetas de vistazo: anterior y siguiente, pequeñas y tenues.
+ * Reusan la misma <PokemonCard>; aquí solo las achicamos desde el contenedor .card-peek */
+.card-peek {
+  width: 150px;
+}
+
+/* Tarjeta dentro del vistazo: menos padding, más transparente y un poco más chica */
+.card-peek .card {
+  padding: 12px;
+  opacity: 0.55;
+  transform: scale(0.95);
+}
+
+/* Imagen chica: el CSS gana sobre el atributo width="200" del <img> */
+.card-peek img {
+  width: 90px;
+  height: auto;
+}
+
+/* Nombre más pequeño */
+.card-peek h2 {
+  font-size: 15px;
+}
+
+/* Tipos más pequeños */
+.card-peek .types li {
+  font-size: 11px;
+  padding: 2px 8px;
+}
+
+/* Ocultamos altura y peso en el vistazo */
+.card-peek p {
+  display: none;
+}
