@@ -29,6 +29,7 @@ function App() {
   const [prevPokemon, setPrevPokemon] = useState(null);
   const [nextPokemon, setNextPokemon] = useState(null);
 
+  // useEffect con [id] pide el Pokémon actual
   useEffect(() => {
     // Función asíncrona para cargar la API
     async function load() {
@@ -43,24 +44,19 @@ function App() {
         // Si la respuesta no esta ok, lanzamos un error con "throw"
         if (!response.ok)
           throw new Error(`Pokemón no encontrado (${response.status})`);
+        // Si la respuesta está ok, la convertimos a JSON y la guardamos en el estado
         const data = await response.json();
         setPokemon(data);
       } catch (err) {
+        // Catch captura el error y lo guarda en el estado de error
         setError(err.message);
       } finally {
+        // Finally se ejecuta siempre, haya habido error o no, y pone loading en false
         setLoading(false);
       }
     }
+    // Llamamos a la función asíncrona para cargar la API
     load();
-
-    /*
-    console.log("effect rendered");
-    // "reponse" esta entre paréntesis porque es un parámetro de la función flecha que se ejecuta cuando la promesa se resuelve.
-    // Si no tuviera paréntesis, es porque solo hay un parámetro, y no es necesario ponerlo entre paréntesis.
-    fetch(API)
-      .then((res) => res.json())
-      .then((data) => setPokemon(data));
-    */
     // El efecto se vuelve a ejecutar cada vez que cambia el id
   }, [id]);
 

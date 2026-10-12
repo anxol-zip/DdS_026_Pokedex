@@ -3,8 +3,7 @@ body {
   background:
     radial-gradient(circle at 20% 20%, #ff6b6b 0, transparent 40%),
     radial-gradient(circle at 80% 30%, #4facfe 0, transparent 40%),
-    radial-gradient(circle at 50% 90%, #a66cff 0, transparent 45%),
-    #1b1b2f;
+    radial-gradient(circle at 50% 90%, #a66cff 0, transparent 45%), #1b1b2f;
   background-attachment: fixed;
 }
 
@@ -85,22 +84,10 @@ h1 {
   padding: 12px 18px;
   border-radius: 16px;
   cursor: pointer;
-  transition: transform 0.15s, background 0.15s;
+  transition:
+    transform 0.15s,
+    background 0.15s;
 }
-
-/*
- * Efecto hover para los botones de navegación: cambio de fondo y desplazamiento hacia arriba
-.nav-btn:hover:not(:disabled) {
-  background: rgba(255, 255, 255, 0.22);
-  transform: translateY(-2px);
-}
-
-  * Efecto para los botones de navegación deshabilitados: opacidad reducida y cursor no permitido
-.nav-btn:disabled {
-  opacity: 0.4;
-  cursor: not-allowed;
-}
-*/
 
 /* Mensaje de error: color rojo claro */
 .error {
