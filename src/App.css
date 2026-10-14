@@ -1,3 +1,19 @@
+/* ===== Variables: valores que se repiten en todo el diseño ===== */
+:root {
+  --text-light: #fff;
+  --text-error: #ffb3b3;
+  /* Glassmorphism: fondo semitransparente + blur + borde claro */
+  --glass-bg: rgba(255, 255, 255, 0.12);
+  --glass-bg-strong: rgba(255, 255, 255, 0.2);
+  --glass-border: rgba(255, 255, 255, 0.25);
+  --glass-blur: blur(14px);
+  --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
+  --in-team-border: rgba(120, 255, 170, 0.7);
+  --remove-bg: rgba(255, 107, 107, 0.25);
+}
+
+/* ===== Base ===== */
+
 /* Fondo con color para que el efecto de vidrio se note */
 body {
   background:
@@ -7,55 +23,125 @@ body {
   background-attachment: fixed;
 }
 
-/* Título en blanco para que contraste con el fondo oscuro */
-h1 {
-  color: #fff;
+/* Títulos en blanco para que contrasten con el fondo oscuro */
+h1,
+h2 {
+  color: var(--text-light);
 }
 
-/* Contenedor principal: centrado y con espacio entre elementos */
-.viewer {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 24px;
-  padding: 0 16px;
-}
-
-/* Contenedor de la tarjeta principal: centrado y con tamaño mínimo */
-.card-slot {
-  min-height: 420px;
-  min-width: 300px;
-  display: grid;
-  place-items: center;
-  color: #fff;
-}
-
-/* Glassmorphism: fondo semitransparente + blur + borde claro */
+/* ===== Vidrio compartido: tarjetas, botones e input ===== */
 .card,
-.nav-btn {
-  background: rgba(255, 255, 255, 0.12);
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
-  border: 1px solid rgba(255, 255, 255, 0.25);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
+.nav-btn,
+.search input {
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--glass-shadow);
 }
 
-/* Tarjeta principal: bordes redondeados, padding y color de texto */
+/* ===== Barra de búsqueda: input y botones en una fila ===== */
+.search {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin: 0 16px 24px;
+}
+
+.search input {
+  width: 280px;
+  padding: 12px 16px;
+  border-radius: 16px;
+  color: var(--text-light);
+  font: inherit;
+}
+
+.search input::placeholder {
+  color: rgba(255, 255, 255, 0.6);
+}
+
+/* ===== Mensajes de estado ===== */
+
+/* "Cargando..." */
+.status {
+  color: var(--text-light);
+}
+
+/* Mensaje de error: rojo claro */
+.error {
+  color: var(--text-error);
+}
+
+/* ===== Equipo (arriba) y cuadrícula de 25 (abajo) ===== */
+.team {
+  margin: 40px 16px;
+  color: var(--text-light);
+}
+
+/* Cuadrícula de 3 columnas para los 6 del equipo */
+.team-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin-top: 16px;
+}
+
+/* Cuadrícula de 25: tantas columnas como quepan, cada una de mínimo 180px */
+.pokemon-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 16px;
+  margin: 0 16px;
+}
+
+/* Tarjetas compactas en las dos cuadrículas */
+.team-grid .card,
+.pokemon-grid .card {
+  padding: 16px;
+}
+
+/* Imagen más chica: el CSS gana sobre el atributo width="200" del <img> */
+.team-grid img,
+.pokemon-grid img {
+  width: 120px;
+  height: auto;
+}
+
+/* Nombre más pequeño en la cuadrícula de 25 */
+.pokemon-grid h2 {
+  font-size: 17px;
+}
+
+/* ===== Paginación: botones a los lados y el número de página al centro ===== */
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 16px;
+  margin: 24px 0;
+  color: var(--text-light);
+}
+
+/* ===== Tarjeta de Pokémon ===== */
 .card {
   border-radius: 24px;
   padding: 24px 32px;
-  color: #fff;
+  color: var(--text-light);
 }
 
-/* Título de la tarjeta: color blanco y capitalización de la primera letra */
+/* Nombre con la primera letra en mayúscula */
 .card h2 {
-  color: #fff;
   text-transform: capitalize;
 }
 
-/* Imagen de la tarjeta: sombra para resaltar la imagen */
+/* Sombra para resaltar la imagen */
 .card img {
   filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.35));
+}
+
+/* Marca de los Pokémon que ya están en el equipo: borde verde */
+.card.in-team {
+  border-color: var(--in-team-border);
 }
 
 /* Lista de tipos: sin viñetas, centrada y con espacio entre elementos */
@@ -68,63 +154,47 @@ h1 {
   margin: 12px 0;
 }
 
-/* Elementos de la lista de tipos: padding, borde redondeado, fondo semitransparente y capitalización de la primera letra */
+/* Cada tipo como pastilla semitransparente */
 .types li {
   padding: 4px 14px;
   border-radius: 999px;
-  background: rgba(255, 255, 255, 0.2);
+  background: var(--glass-bg-strong);
   text-transform: capitalize;
   font-size: 15px;
 }
 
-/* Botones de navegación: color blanco, padding, borde redondeado y transición para el efecto hover */
+/* ===== Botones ===== */
+
+/* Botones de navegación y búsqueda */
 .nav-btn {
-  color: #fff;
+  color: var(--text-light);
   font: inherit;
   padding: 12px 18px;
   border-radius: 16px;
   cursor: pointer;
-  transition:
-    transform 0.15s,
-    background 0.15s;
 }
 
-/* Mensaje de error: color rojo claro */
-.error {
-  color: #ffb3b3;
+/* Botón de agregar / eliminar dentro de la tarjeta */
+.card-btn {
+  margin-top: 12px;
+  padding: 6px 14px;
+  border-radius: 12px;
+  border: 1px solid var(--glass-border);
+  background: var(--glass-bg-strong);
+  color: var(--text-light);
+  font: inherit;
+  font-size: 14px;
+  cursor: pointer;
 }
 
-/* Tarjetas de vistazo: anterior y siguiente, pequeñas y tenues.
- * Reusan la misma <PokemonCard>; aquí solo las achicamos desde el contenedor .card-peek */
-.card-peek {
-  width: 150px;
+/* Botón de eliminar en tono rojizo */
+.card-btn.remove {
+  background: var(--remove-bg);
 }
 
-/* Tarjeta dentro del vistazo: menos padding, más transparente y un poco más chica */
-.card-peek .card {
-  padding: 12px;
-  opacity: 0.55;
-  transform: scale(0.95);
-}
-
-/* Imagen chica: el CSS gana sobre el atributo width="200" del <img> */
-.card-peek img {
-  width: 90px;
-  height: auto;
-}
-
-/* Nombre más pequeño */
-.card-peek h2 {
-  font-size: 15px;
-}
-
-/* Tipos más pequeños */
-.card-peek .types li {
-  font-size: 11px;
-  padding: 2px 8px;
-}
-
-/* Ocultamos altura y peso en el vistazo */
-.card-peek p {
-  display: none;
+/* Deshabilitados: primera/última página, ya en el equipo o equipo lleno */
+.nav-btn:disabled,
+.card-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }

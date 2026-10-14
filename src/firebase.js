@@ -1,9 +1,7 @@
-// Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
+import { getFirestore } from "firebase/firestore";
 
-// Your web app's Firebase configuration
+// Configuración del proyecto de Firebase; los valores vienen de .env (ver .env.example)
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FB_API_KEY,
   authDomain: import.meta.env.VITE_FB_AUTH_DOMAIN,
@@ -13,5 +11,7 @@ const firebaseConfig = {
   appId: import.meta.env.VITE_FB_APP_ID,
 };
 
-// Initialize Firebase
+// Inicializamos la app y exportamos la base de datos de Firestore
 const app = initializeApp(firebaseConfig);
+
+export const db = getFirestore(app);

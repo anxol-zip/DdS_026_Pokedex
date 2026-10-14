@@ -5,17 +5,20 @@ Pokédex en React + Vite que consume la [PokéAPI](https://pokeapi.co/). Proyect
 
 ## Qué hace
 
-- Muestra un Pokémon a la vez (imagen oficial, número, nombre, tipos, altura y peso), empezando en Mewtwo (#150).
-- Navega al anterior / siguiente con botones, dentro del rango #1–#1025.
-- Muestra un vistazo del Pokémon vecino a cada lado.
+- Muestra una cuadrícula de 25 Pokémon por página (imagen oficial, número, nombre, tipos, altura y
+  peso), paginada con `limit`/`offset` dentro del rango #1–#1025.
+- Busca un Pokémon por su nombre exacto (todavía no por id ni por parte del nombre).
+- Arma un equipo de hasta 6 Pokémon sin repetir: botón "Agregar" en cada tarjeta y "Eliminar" en
+  las del equipo. Los que ya están en el equipo se marcan con borde verde.
+- Guarda el equipo en Firestore (colección `team`, un documento por id) y lo recupera al abrir la app.
 
 ## Stack
 
-| Componente | Tecnología |
-| ---------- | ---------- |
-| UI | React 19, Vite 8 |
-| Datos | PokéAPI (`fetch`) |
-| Persistencia | Firebase — conexión inicializada, todavía sin uso |
+| Componente   | Tecnología                                            |
+| ------------ | ----------------------------------------------------- |
+| UI           | React 19, Vite 8                                      |
+| Datos        | PokéAPI (`fetch`)                                     |
+| Persistencia | Firebase Firestore (`setDoc`, `deleteDoc`, `getDocs`) |
 
 ## Correr el proyecto
 
@@ -27,5 +30,5 @@ npm run dev
 
 ## Estado
 
-En desarrollo (branch `develop`). La integración con Firestore apenas empezó: `src/firebase.js`
-inicializa la app, pero aún no se lee ni escribe nada.
+En desarrollo (branch `develop`). El equipo sale en el orden de los documentos de Firestore, no en
+el orden en que se agregaron.
