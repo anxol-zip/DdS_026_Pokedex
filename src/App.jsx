@@ -1,25 +1,6 @@
 import { useEffect, useState } from "react";
-import {
-  collection,
-  deleteDoc,
-  doc,
-  getDocs,
-  setDoc,
-} from "firebase/firestore";
-import { db } from "./firebase";
 import { PokemonCard } from "./components/PokemonCard";
 import "./App.css";
-
-// URL base de la PokéAPI
-const API = "https://pokeapi.co/api/v2";
-// Último id de Pokémon "normal" (después vienen formas especiales)
-const LAST_ID = 1025;
-// Cuántos Pokémon se muestran por página
-const PAGE_SIZE = 25;
-// Tamaño máximo del equipo
-const TEAM_SIZE = 6;
-// Colección de Firestore donde se guarda el equipo
-const TEAM_COLLECTION = "team";
 
 function App() {
   // offset = cuántos Pokémon nos saltamos desde el inicio.
@@ -125,72 +106,6 @@ function App() {
 
     loadTeam();
   }, []);
-
-  // Paginación: valores derivados del offset
-  const isFirstPage = offset === 0;
-  const isLastPage = offset + PAGE_SIZE >= LAST_ID;
-  // Número de página para mostrar: offset 0 → página 1, offset 25 → página 2...
-  const page = offset / PAGE_SIZE + 1;
-  const totalPages = Math.ceil(LAST_ID / PAGE_SIZE);
-
-  // ¿El equipo ya está lleno?
-  const teamFull = team.length >= TEAM_SIZE;
-
-  // Paginación: movemos el offset de 25 en 25, sin bajar de 0
-  function goToPrevPage() {
-    setOffset((current) => Math.max(0, current - PAGE_SIZE));
-  }
-
-  function goToNextPage() {
-    setOffset((current) => current + PAGE_SIZE);
-  }
-
-  // Búsqueda: e.preventDefault() evita que el formulario recargue la página.
-  // La API solo acepta nombres en minúsculas y sin espacios a los lados.
-  function handleSearch(e) {
-    e.preventDefault();
-    setSearch(text.trim().toLowerCase());
-  }
-
-  // Limpiar: vaciamos el input y la búsqueda, y regresamos a la cuadrícula
-  function clearSearch() {
-    setText("");
-    setSearch("");
-  }
-
-  // ¿Este Pokémon ya está en el equipo? Lo buscamos por id con .some()
-  function isInTeam(pokemon) {
-    return team.some((member) => member.id === pokemon.id);
-  }
-
-  // Agregar: si el equipo está lleno o el Pokémon ya está, no hacemos nada.
-  // Si no, lo guardamos en Firestore con setDoc y creamos un arreglo nuevo
-  // con los que ya había (...team) más el nuevo.
-  async function addToTeam(pokemon) {
-    if (teamFull || isInTeam(pokemon)) return;
-
-    try {
-      await setDoc(doc(db, TEAM_COLLECTION, String(pokemon.id)), {
-        name: pokemon.name,
-        img: pokemon.sprites.other["official-artwork"].front_default,
-      });
-      setTeam([...team, pokemon]);
-    } catch (err) {
-      console.error("Error adding to the team:", err);
-    }
-  }
-
-  // Eliminar: primero se borra de Firestore con deleteDoc y luego del estado;
-  // .filter() regresa un arreglo nuevo sin el Pokémon con ese id
-  async function removeFromTeam(pokemon) {
-    try {
-      // Borramos el documento team/<id> en Firestore, igual que setDoc lo creó
-      await deleteDoc(doc(db, TEAM_COLLECTION, String(pokemon.id)));
-      setTeam(team.filter((member) => member.id !== pokemon.id));
-    } catch (err) {
-      console.error("Error removing from the team:", err);
-    }
-  }
 
   return (
     <>
