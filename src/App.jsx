@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { PokemonCard } from "./components/PokemonCard";
 import "./App.css";
+// Importamos las funciones de logic
 import {
   TEAM_SIZE,
   TOTAL_PAGES,
@@ -15,7 +16,9 @@ import {
   addToTeam,
   removeFromTeam,
 } from "./logic/pokedex";
+// Importamos las funciones para cargar Pokemon desde la API contenida en data
 import { fetchPokemon, fetchPokemonPage } from "./data/pokemon";
+// Importamos las funciones para cargar, salvar, y quitar elementos del equipo, con la conexión a Firestore, contenida en data
 import { loadTeam, saveTeamMember, deleteTeamMember } from "./data/team";
 
 function App() {
@@ -115,6 +118,7 @@ function App() {
   // Eliminar: mismo orden, primero Firestore y luego el estado
   async function handleRemove(pokemon) {
     try {
+      // Le pasamos el id en lugar de TODO el pokemon porque ahora no buscamos registrar información, solo LOCALIZAR al que queremos quitar
       await deleteTeamMember(pokemon.id);
       setTeam((prev) => removeFromTeam(prev, pokemon));
     } catch (err) {
@@ -122,6 +126,7 @@ function App() {
     }
   }
 
+  // ===== Interfaz principal =====
   return (
     <>
       <h1>Pokédex</h1>

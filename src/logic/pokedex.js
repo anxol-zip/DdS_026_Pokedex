@@ -1,8 +1,4 @@
 // Reglas de la Pokédex reunidas en un js
-// Todas son funciones normales de JavaScript:
-//   - No usan React ni Firebase.
-//   - Reciben el estado (offset, team, text) y regresan un valor NUEVO,
-//     sin modificar lo que recibieron.
 
 // Último id de Pokémon "normal" (después vienen formas especiales)
 export const LAST_ID = 1025;
@@ -13,7 +9,14 @@ export const TEAM_SIZE = 6;
 // Total de páginas: no depende del estado, así que puede ser constante
 export const TOTAL_PAGES = Math.ceil(LAST_ID / PAGE_SIZE);
 
-// Paginación
+// ===== Mensajes =====
+export const MESSAGES = {
+  NO_NAME: "Ponle nombre a tu equipo",
+  EMPTY: "Agrega al menos un Pokémon",
+  OVERFLOW: "Un equipo tiene máximo ${TEAM_SIZE} miembros",
+};
+
+// ===== Paginación =====
 
 // Reciben el offset: se recalculan cada vez que se llaman (en cada render), con el offset actual
 export function isFirstPage(offset) {
@@ -38,14 +41,14 @@ export function nextOffset(offset) {
   return offset + PAGE_SIZE;
 }
 
-// Búsqueda
+// ===== Búsqueda =====
 
 // La API solo acepta nombres en minúsculas y sin espacios a los lados
 export function normalizeSearch(text) {
   return text.trim().toLowerCase();
 }
 
-// Equipo
+// ===== Equipo =====
 
 // ¿El equipo ya está lleno?
 export function isTeamFull(team) {

@@ -1,5 +1,5 @@
-// Acceso a la PokéAPI. Funciones normales de JavaScript: no usan React.
-// Regresan los datos o lanzan un error; App decide qué hacer con él.
+// Acceso a la PokéAPI. Funciones normales de JavaScript
+// Regresan los datos o lanzan un error; App decide qué hacer con él
 import { PAGE_SIZE } from "../logic/pokedex";
 
 // URL base de la PokéAPI
@@ -10,7 +10,9 @@ export async function fetchPokemon(nameOrId) {
   const response = await fetch(`${API}/pokemon/${nameOrId}`);
   // Si la respuesta no está ok, lanzamos un error con "throw"
   if (!response.ok) {
-    throw new Error(`No se encontró ningún Pokémon llamado "${nameOrId}"`);
+    throw new Error(
+      `No se encontró ningún Pokémon con nombre o ID:  "${nameOrId}"`,
+    );
   }
   return response.json();
 }

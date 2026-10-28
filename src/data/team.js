@@ -1,5 +1,4 @@
 // Acceso a Firestore para el equipo.
-// Este es el ÚNICO archivo (junto con src/firebase.js) que importa 'firebase/firestore'.
 import { db } from "../firebase";
 import {
   collection,
@@ -14,9 +13,8 @@ import { fetchPokemon } from "./pokemon";
 const TEAM_COLLECTION = "team";
 
 // Trae el equipo guardado.
-// Cada documento se llama como el id del Pokémon (team/150, team/25...),
-// pero solo guarda { name, img }. La tarjeta necesita tipos, altura y peso,
-// así que pedimos el detalle de cada uno a la PokéAPI al mismo tiempo con Promise.all.
+// Cada documento se llama como el id del Pokémon
+// pero solo guarda { name, img }. La tarjeta necesita tipos, altura y peso, así que pedimos el detalle de cada uno a la PokéAPI al mismo tiempo con Promise.all
 export async function loadTeam() {
   const snapshot = await getDocs(collection(db, TEAM_COLLECTION));
   return Promise.all(snapshot.docs.map((teamDoc) => fetchPokemon(teamDoc.id)));
