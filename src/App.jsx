@@ -1,6 +1,22 @@
 import { useEffect, useState } from "react";
 import { PokemonCard } from "./components/PokemonCard";
 import "./App.css";
+import {
+  TEAM_SIZE,
+  TOTAL_PAGES,
+  isFirstPage,
+  isLastPage,
+  getPage,
+  prevOffset,
+  nextOffset,
+  normalizeSearch,
+  isTeamFull,
+  isInTeam,
+  addToTeam,
+  removeFromTeam,
+} from "./logic/pokedex";
+import { fetchPokemon, fetchPokemonPage } from "./data/pokemon";
+import { loadTeam, saveTeamMember, deleteTeamMember } from "./data/team";
 
 function App() {
   // offset = cuántos Pokémon nos saltamos desde el inicio.
@@ -28,39 +44,9 @@ function App() {
       setError(null);
 
       try {
-        let list;
-
-        if (search) {
-          // Con búsqueda: pedimos directo ese Pokémon por su nombre
-          const response = await fetch(`${API}/pokemon/${search}`);
-          // Si la respuesta no está ok, lanzamos un error con "throw"
-          if (!response.ok) {
-            throw new Error(
-              `No se encontró ningún Pokémon llamado "${search}"`,
-            );
-          }
-          // Lo metemos en un arreglo de uno para dibujarlo en la misma cuadrícula
-          list = [await response.json()];
-        } else {
-          // Sin búsqueda: pedimos la lista de 25 a partir del offset.
-          // Esta lista solo trae { name, url } de cada Pokémon, no su imagen ni tipos.
-          const response = await fetch(
-            `${API}/pokemon?limit=${PAGE_SIZE}&offset=${offset}`,
-          );
-          if (!response.ok) {
-            throw new Error(`Error al cargar la lista (${response.status})`);
-          }
-          const data = await response.json();
-
-          // Por eso pedimos el detalle de cada uno (su url) al mismo tiempo con Promise.all.
-          // Promise.all espera a que terminen las 25 peticiones y regresa un arreglo con todas.
-          list = await Promise.all(
-            data.results.map(async (item) => {
-              const detailResponse = await fetch(item.url);
-              return detailResponse.json();
-            }),
-          );
-        }
+        const list = search
+          ? [await fetchPokemon(search)]
+          : await fetchPokemonPage(offset);
 
         // Si la respuesta sigue siendo la más reciente, la guardamos en el estado
         if (!ignore) setPokemons(list);
@@ -83,19 +69,9 @@ function App() {
 
   // useEffect con []: solo se ejecuta una vez, al abrir la app, para recuperar el equipo de Firestore
   useEffect(() => {
-    async function loadTeam() {
+    async function showTeam() {
       try {
-        // getDocs trae todos los documentos de la colección "team"
-        const snapshot = await getDocs(collection(db, TEAM_COLLECTION));
-        // Cada documento se llama como el id del Pokémon (team/150, team/25...),
-        // pero solo guarda { name, img }. La tarjeta necesita tipos, altura y peso,
-        // así que pedimos el detalle de cada uno a la PokéAPI al mismo tiempo con Promise.all.
-        const members = await Promise.all(
-          snapshot.docs.map(async (teamDoc) => {
-            const response = await fetch(`${API}/pokemon/${teamDoc.id}`);
-            return response.json();
-          }),
-        );
+        const members = await loadTeam();
         setTeam(members);
       } catch (err) {
         // Si falla, lo mostramos en consola como en agregar/eliminar,
@@ -104,8 +80,47 @@ function App() {
       }
     }
 
-    loadTeam();
+    showTeam();
   }, []);
+
+  // Valores derivados: se calculan en cada render
+  const teamFull = isTeamFull(team);
+
+  const goToPrevPage = () => setOffset((current) => prevOffset(current));
+  const goToNextPage = () => setOffset((current) => nextOffset(current));
+
+  function handleSearch(e) {
+    e.preventDefault();
+    setSearch(normalizeSearch(text));
+  }
+
+  function clearSearch() {
+    setText("");
+    setSearch("");
+  }
+
+  // Agregar: primero se guarda en Firestore y solo después se actualiza el estado,
+  // así la pantalla no muestra un cambio que no se guardó
+  async function handleAdd(pokemon) {
+    if (isTeamFull(team) || isInTeam(team, pokemon)) return;
+
+    try {
+      await saveTeamMember(pokemon);
+      setTeam((prev) => addToTeam(prev, pokemon));
+    } catch (err) {
+      console.error("Error adding to the team:", err);
+    }
+  }
+
+  // Eliminar: mismo orden, primero Firestore y luego el estado
+  async function handleRemove(pokemon) {
+    try {
+      await deleteTeamMember(pokemon.id);
+      setTeam((prev) => removeFromTeam(prev, pokemon));
+    } catch (err) {
+      console.error("Error removing from the team:", err);
+    }
+  }
 
   return (
     <>
@@ -146,7 +161,7 @@ function App() {
             <PokemonCard
               key={member.id}
               pokemon={member}
-              onRemove={removeFromTeam}
+              onRemove={handleRemove}
             />
           ))}
         </div>
@@ -159,8 +174,8 @@ function App() {
             <PokemonCard
               key={pokemon.id}
               pokemon={pokemon}
-              onAdd={addToTeam}
-              inTeam={isInTeam(pokemon)}
+              onAdd={handleAdd}
+              inTeam={isInTeam(team, pokemon)}
               teamFull={teamFull}
             />
           ))}
@@ -173,17 +188,17 @@ function App() {
           <button
             className="nav-btn"
             onClick={goToPrevPage}
-            disabled={isFirstPage || loading}
+            disabled={isFirstPage(offset) || loading}
           >
             ◀ Anterior
           </button>
           <span>
-            Página {page} de {totalPages}
+            Página {getPage(offset)} de {TOTAL_PAGES}
           </span>
           <button
             className="nav-btn"
             onClick={goToNextPage}
-            disabled={isLastPage || loading}
+            disabled={isLastPage(offset) || loading}
           >
             Siguiente ▶
           </button>

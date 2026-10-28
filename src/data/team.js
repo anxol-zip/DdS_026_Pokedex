@@ -1,3 +1,5 @@
+// Acceso a Firestore para el equipo.
+// Este es el ÚNICO archivo (junto con src/firebase.js) que importa 'firebase/firestore'.
 import { db } from "../firebase";
 import {
   collection,
@@ -6,20 +8,29 @@ import {
   getDocs,
   setDoc,
 } from "firebase/firestore";
+import { fetchPokemon } from "./pokemon";
 
-// Agregar: si el equipo está lleno o el Pokémon ya está, no hacemos nada.
-  // Si no, lo guardamos en Firestore con setDoc y creamos un arreglo nuevo
-  // con los que ya había (...team) más el nuevo.
-  async function addToTeam(pokemon) {
-    if (teamFull || isInTeam(pokemon)) return;
+// Colección de Firestore donde se guarda el equipo: team/{idDelPokemon}
+const TEAM_COLLECTION = "team";
 
-    try {
-      await setDoc(doc(db, TEAM_COLLECTION, String(pokemon.id)), {
-        name: pokemon.name,
-        img: pokemon.sprites.other["official-artwork"].front_default,
-      });
-      setTeam([...team, pokemon]);
-    } catch (err) {
-      console.error("Error adding to the team:", err);
-    }
-  }
+// Trae el equipo guardado.
+// Cada documento se llama como el id del Pokémon (team/150, team/25...),
+// pero solo guarda { name, img }. La tarjeta necesita tipos, altura y peso,
+// así que pedimos el detalle de cada uno a la PokéAPI al mismo tiempo con Promise.all.
+export async function loadTeam() {
+  const snapshot = await getDocs(collection(db, TEAM_COLLECTION));
+  return Promise.all(snapshot.docs.map((teamDoc) => fetchPokemon(teamDoc.id)));
+}
+
+// Guarda un Pokémon en team/{id} con setDoc
+export async function saveTeamMember(pokemon) {
+  await setDoc(doc(db, TEAM_COLLECTION, String(pokemon.id)), {
+    name: pokemon.name,
+    img: pokemon.sprites.other["official-artwork"].front_default,
+  });
+}
+
+// Borra el documento team/{id}, igual que setDoc lo creó
+export async function deleteTeamMember(id) {
+  await deleteDoc(doc(db, TEAM_COLLECTION, String(id)));
+}
