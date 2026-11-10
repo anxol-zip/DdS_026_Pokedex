@@ -1,5 +1,6 @@
 import { initializeApp } from "firebase/app";
 import { getFirestore } from "firebase/firestore";
+import { getAuth } from "firebase/auth";
 
 // Configuración del proyecto de Firebase; los valores vienen de .env (ver .env.example)
 const firebaseConfig = {
@@ -15,3 +16,6 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 
 export const db = getFirestore(app);
+
+// Nuevo export para auth
+export const auth = getAuth(app)
